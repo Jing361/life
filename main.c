@@ -17,7 +17,7 @@ int main(int argc, char **argv){
 //    bool wrap = false;
     bool wrap = true;
     int states = 1;
-    int fieldSize = 12;
+    int fieldSize = 15;
     bool field[fieldSize][fieldSize];
     int i, j;
     for(i = 0; i < fieldSize; i++){
@@ -33,23 +33,23 @@ int main(int argc, char **argv){
     field[9][9] = true;
     field[8][10] = true;
 
-        //render new field
-        for(i = 0; i <= fieldSize + 1; i++)
-            printf("_");
-        printf("\n");
-        for(i = 0; i < fieldSize; i++){
-            printf("|");
-            for(j = 0; j < fieldSize; j++){
-                if(field[i][j])
-                    printf("X");
-                else
-                    printf(" ");
-            }
-            printf("|\n");
+    //render new field
+    for(i = 0; i <= fieldSize + 1; i++)
+        printf("_");
+    printf("\n");
+    for(i = 0; i < fieldSize; i++){
+        printf("|");
+        for(j = 0; j < fieldSize; j++){
+            if(field[i][j])
+                printf("X");
+            else
+                printf(" ");
         }
-        for(i = 0; i <= fieldSize + 1; i++)
-            printf("_");
-        printf("\n");
+        printf("|\n");
+    }
+    for(i = 0; i <= fieldSize + 1; i++)
+        printf("_");
+    printf("\n");
 
     while(1){
         printf("Waiting\n");
@@ -67,24 +67,14 @@ int main(int argc, char **argv){
         // any live cell with two or three live neighbors lives
         // any live cell with more than three live neighbors dies(crowding)
         // any dead cell with exactly three live neighbors becomes a live cell(reproduction)
-        int test = 0;
-        for(i = 0; i < fieldSize; i++){
-            for(j = 0; j < fieldSize; j++){
-                if(field[i][j]){
-                    test ++; 
-                }
-            }
-        }
-        printf("field: %d\n", test);
-
         for(i = 0; i < fieldSize; i++){
                 int iUP, iDN;
                 iUP = i + 1;
                 iDN = i - 1;
             for(j = 0; j < fieldSize; j++){
                 int jUP, jDN;
-                jUP = i + 1;
-                jDN = i - 1;
+                jUP = j + 1;
+                jDN = j - 1;
 
                 if(wrap){
                     if(iUP >= fieldSize){
@@ -131,36 +121,8 @@ int main(int argc, char **argv){
                     work[i][j] = true;
             }
         }
-        test = 0;
-        for(i = 0; i < fieldSize; i++){
-            for(j = 0; j < fieldSize; j++){
-                if(work[i][j]){
-                    test ++; 
-                }
-            }
-        }
-        printf("work: %d\n", test);
         // copy new data into working array
         memcpy(field, work, sizeof(field));
-        test = 0;
-        for(i = 0; i < fieldSize; i++){
-            for(j = 0; j < fieldSize; j++){
-                if(field[i][j]){
-                    test ++; 
-                }
-            }
-        }
-        printf("field: %d\n", test);
-
-        test = 0;
-        for(i = 0; i < fieldSize; i++){
-            for(j = 0; j < fieldSize; j++){
-                if(work[i][j]){
-                    test ++; 
-                }
-            }
-        }
-        printf("work: %d\n", test);
 
         //render new field
         for(i = 0; i <= fieldSize + 1; i++)
