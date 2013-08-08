@@ -14,9 +14,10 @@
 #include<stdbool.h>
 
 int main(int argc, char **argv){
-    bool wrap = false;
+//    bool wrap = false;
+    bool wrap = true;
     int states = 1;
-    int fieldSize = 32;
+    int fieldSize = 12;
     bool field[fieldSize][fieldSize];
     int i, j;
     for(i = 0; i < fieldSize; i++){
@@ -31,6 +32,24 @@ int main(int argc, char **argv){
     field[9][8] = true;
     field[9][9] = true;
     field[8][10] = true;
+
+        //render new field
+        for(i = 0; i <= fieldSize + 1; i++)
+            printf("_");
+        printf("\n");
+        for(i = 0; i < fieldSize; i++){
+            printf("|");
+            for(j = 0; j < fieldSize; j++){
+                if(field[i][j])
+                    printf("X");
+                else
+                    printf(" ");
+            }
+            printf("|\n");
+        }
+        for(i = 0; i <= fieldSize + 1; i++)
+            printf("_");
+        printf("\n");
 
     while(1){
         printf("Waiting\n");
@@ -48,39 +67,103 @@ int main(int argc, char **argv){
         // any live cell with two or three live neighbors lives
         // any live cell with more than three live neighbors dies(crowding)
         // any dead cell with exactly three live neighbors becomes a live cell(reproduction)
-
+        int test = 0;
         for(i = 0; i < fieldSize; i++){
             for(j = 0; j < fieldSize; j++){
+                if(field[i][j]){
+                    test ++; 
+                }
+            }
+        }
+        printf("field: %d\n", test);
+
+        for(i = 0; i < fieldSize; i++){
+                int iUP, iDN;
+                iUP = i + 1;
+                iDN = i - 1;
+            for(j = 0; j < fieldSize; j++){
+                int jUP, jDN;
+                jUP = i + 1;
+                jDN = i - 1;
+
+                if(wrap){
+                    if(iUP >= fieldSize){
+                        iUP = 0;
+                    }
+                    if(iDN < 0){
+                        iDN = fieldSize - 1;
+                    }
+                    if(jUP >= fieldSize){
+                        jUP = 0;
+                    }
+                    if(jDN < 0){
+                        jDN = fieldSize - 1;
+                    }
+                }
+
                 // count neighbors
                 // check each neighbor in turn, with error checking
                 int neighbors = 0;
-                if((i - 1) >= 0 && field[i - 1][j])
+                if(field[iDN][j])
                     neighbors ++;
-                if((i - 1) >= 0 && (j + 1) < fieldSize && field[i - 1][j + 1])
+                if(field[iDN][jUP])
                     neighbors ++;
-                if((j + 1) < fieldSize && field[i][j + 1])
+                if(field[i][jUP])
                     neighbors ++;
-                if((i + 1) < fieldSize && (j + 1) < fieldSize && field[i + 1][j + 1])
+                if(field[iUP][jUP])
                     neighbors ++;
-                if((i + 1) < fieldSize && field[i + 1][j])
+                if(field[iUP][j])
                     neighbors ++;
-                if((i + 1) < fieldSize && (j - 1) >= 0 && field[i + 1][j - 1])
+                if(field[iUP][jDN])
                     neighbors ++;
-                if((j - 1) >= 0 && field[i][j - 1])
+                if(field[i][jDN])
                     neighbors ++;
-                if((i - 1) >= 0 && (j - 1) >= 0 && field[i - 1][j - 1])
+                if(field[iDN][jDN])
                     neighbors ++;
                 
-                if(field[i][j] && neighbors < 2) work[i][j] = false;
-                if(field[i][j] && (neighbors == 2 || neighbors == 3)) work[i][j] = true;
-                if(field[i][j] && neighbors > 3) work[i][j] = false;
-                if(!field[i][j] && neighbors == 3) work[i][j] = true;
+                if(field[i][j] && neighbors < 2)
+                    work[i][j] = false;
+                if(field[i][j] && (neighbors == 2 || neighbors == 3))
+                    work[i][j] = true;
+                if(field[i][j] && neighbors > 3)
+                    work[i][j] = false;
+                if(!field[i][j] && neighbors == 3)
+                    work[i][j] = true;
             }
         }
+        test = 0;
+        for(i = 0; i < fieldSize; i++){
+            for(j = 0; j < fieldSize; j++){
+                if(work[i][j]){
+                    test ++; 
+                }
+            }
+        }
+        printf("work: %d\n", test);
         // copy new data into working array
         memcpy(field, work, sizeof(field));
+        test = 0;
+        for(i = 0; i < fieldSize; i++){
+            for(j = 0; j < fieldSize; j++){
+                if(field[i][j]){
+                    test ++; 
+                }
+            }
+        }
+        printf("field: %d\n", test);
+
+        test = 0;
+        for(i = 0; i < fieldSize; i++){
+            for(j = 0; j < fieldSize; j++){
+                if(work[i][j]){
+                    test ++; 
+                }
+            }
+        }
+        printf("work: %d\n", test);
+
         //render new field
-        for(i = 0; i <= fieldSize; i++)
+        for(i = 0; i <= fieldSize + 1; i++)
             printf("_");
         printf("\n");
         for(i = 0; i < fieldSize; i++){
@@ -93,7 +176,7 @@ int main(int argc, char **argv){
             }
             printf("|\n");
         }
-        for(i = 0; i < fieldSize; i++)
+        for(i = 0; i <= fieldSize + 1; i++)
             printf("_");
         printf("\n");
     }
